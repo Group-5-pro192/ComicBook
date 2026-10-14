@@ -80,7 +80,7 @@ public void saveData() {
 
         int choice = -1;
         do {
-            System.out.println("         COMIC BOOK RENTAL SHOP # SE2102-GroupXX"); // Nhớ sửa GroupXX
+            System.out.println("         COMIC BOOK RENTAL SHOP # SE2102-Group05"); 
             System.out.println("1. Add new comic book.");
             System.out.println("2. Search book by title.");
             System.out.println("3. Search book of an author.");
