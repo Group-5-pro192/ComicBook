@@ -51,7 +51,7 @@ public class ComicBookManagement {
         }
     }
 }
-//Phần menu//
+//Phần menu
 public void saveData() {
         try {
             java.io.PrintWriter writer = new java.io.PrintWriter(new File(FILE_NAME));
