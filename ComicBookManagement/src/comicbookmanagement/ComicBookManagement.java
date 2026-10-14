@@ -229,7 +229,7 @@ public class ComicBookManagement {
                     System.out.println("Data saved successfully. Exiting the program. Goodbye!");
                     break;
                 default:
-                    System.out.println("The number you entered is out of range. Please choose a number between 1 and 7!");
+                    System.out.println("The number you entered is out of range. Please choose a number (1-7)!");
                     break;
             }
         } while (choice != 7);
