@@ -51,3 +51,83 @@ public class ComicBookManagement {
         }
     }
 }
+//Phần menu//
+public void saveData() {
+        try {
+            java.io.PrintWriter writer = new java.io.PrintWriter(new File(FILE_NAME));
+            writer.println(comicList.size()); 
+            
+            for (ComicBook book : comicList) {
+                writer.println(book.getId());
+                writer.println(book.getTitle());
+                writer.println(book.getBookRentalPrice());
+                writer.println(book.getAuthor());
+                writer.println(book.getVolume());
+            }
+            
+            writer.close();
+            System.out.println("Data saved successfully to " + FILE_NAME);
+        } catch (Exception e) {
+            System.out.println("Error saving file: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ComicBookManagement manager = new ComicBookManagement();
+           
+        manager.loadData();
+
+        int choice = -1;
+        do {
+            System.out.println("         COMIC BOOK RENTAL SHOP # SE2102-GroupXX"); // Nhớ sửa GroupXX
+            System.out.println("1. Add new comic book.");
+            System.out.println("2. Search book by title.");
+            System.out.println("3. Search book of an author.");
+            System.out.println("4. Update book rental price.");
+            System.out.println("5. Delete comic book.");
+            System.out.println("6. About us.");
+            System.out.println("7. Quit.");
+            System.out.print("     Please select a function: ");
+
+            try {
+                choice = Integer.parseInt(sc.nextLine().trim());
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("Function 1 is under construction.");
+                        break;
+                    case 2:
+                        System.out.println("Function 2 is under construction.");
+                        break;
+                    case 3:
+                        System.out.println("Function 3 is under construction.");
+                        break;
+                    case 4:
+                        System.out.println("Function 4 is under construction.");
+                        break;
+                    case 5:
+                        System.out.println("Function 5 is under construction.");
+                        break;
+                    case 6:
+                        System.out.println("Function 6 is under construction.");
+                        break;
+                    case 7:
+                        // Gọi hàm saveData() trước khi thoát
+                        manager.saveData();
+                        System.out.println("Exiting program. Goodbye!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please select a number from 1 to 7.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter an integer number.");
+            }
+            System.out.println(); 
+        } while (choice != 7);
+        
+        sc.close();
+    }
+
+    
+} 
