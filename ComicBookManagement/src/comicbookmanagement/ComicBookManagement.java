@@ -95,23 +95,11 @@ public void saveData() {
 
                 switch (choice) {
                     case 1:
-                        System.out.println("Function 1 is under construction.");
-                        break;
                     case 2:
-                        System.out.println("Function 2 is under construction.");
-                        break;
                     case 3:
-                        System.out.println("Function 3 is under construction.");
-                        break;
                     case 4:
-                        System.out.println("Function 4 is under construction.");
-                        break;
                     case 5:
-                        System.out.println("Function 5 is under construction.");
-                        break;
                     case 6:
-                        System.out.println("Function 6 is under construction.");
-                        break;
                     case 7:
                         manager.saveData();
                         System.out.println("Exiting program. Goodbye!");
