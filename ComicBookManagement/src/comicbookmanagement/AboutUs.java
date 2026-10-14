@@ -23,15 +23,15 @@ public class AboutUs {
         System.out.println("+-----+-----------+------------------------------+--------------------+-----------------------------+");
         
         System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n", 
-                1, "CE210032", "Ngo Thi Thao Huynh", "Leader", "Class ComicBookManagement");
+                1, "CE210032", "Ngo Thi Thao Huynh", "Leader", "Testing & Data");
         System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n", 
-                2, "CE210356", "Ngo Ngoc Anh Thu", "Secretary", "Menu & Validation");
+                2, "CE210356", "Ngo Ngoc Anh Thu", "Secretary", "Class ComicBookManagement");
         System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n", 
                 3, "CE210006", "Nguyen Huu Loc", "Member", "About Us");
         System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n", 
-                4, "CE210031", "Le Ngoc Ngan", "Member", "Class ComicBook");
+                4, "CE210031", "Le Ngoc Ngan", "Member", "Menu");
         System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n", 
-                5, "CE190377", "Dinh Minh Tien", "Member", "Testing & Data");
+                5, "CE190377", "Dinh Minh Tien", "Member", "Class ComicBook");
                 
         System.out.println("+-----+-----------+------------------------------+--------------------+-----------------------------+");
         System.out.println();
