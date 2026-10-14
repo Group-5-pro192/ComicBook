@@ -113,7 +113,6 @@ public void saveData() {
                         System.out.println("Function 6 is under construction.");
                         break;
                     case 7:
-                        // Gọi hàm saveData() trước khi thoát
                         manager.saveData();
                         System.out.println("Exiting program. Goodbye!");
                         break;
