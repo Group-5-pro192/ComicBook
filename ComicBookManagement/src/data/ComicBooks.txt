@@ -1,0 +1,126 @@
+25
+1
+Doraemon
+5.00
+Fujiko F. Fujio
+1
+2
+Doraemon
+5.00
+Fujiko F. Fujio
+2
+3
+Doraemon
+5.50
+Fujiko F. Fujio
+3
+4
+Detective Conan
+7.50
+Gosho Aoyama
+1
+5
+Detective Conan
+7.50
+Gosho Aoyama
+2
+6
+Magic Kaito
+6.00
+Gosho Aoyama
+1
+7
+One Piece
+8.00
+Eiichiro Oda
+1
+8
+One Piece
+8.00
+Eiichiro Oda
+2
+9
+One Piece
+8.50
+Eiichiro Oda
+3
+10
+Naruto
+6.50
+Masashi Kishimoto
+1
+11
+Naruto
+6.50
+Masashi Kishimoto
+2
+12
+Dragon Ball
+6.00
+Akira Toriyama
+1
+13
+Dragon Ball
+6.00
+Akira Toriyama
+2
+14
+Dr. Slump
+5.50
+Akira Toriyama
+1
+15
+Attack on Titan
+9.00
+Hajime Isayama
+1
+16
+Attack on Titan
+9.00
+Hajime Isayama
+2
+17
+Demon Slayer
+8.50
+Koyoharu Gotouge
+1
+18
+Demon Slayer
+8.50
+Koyoharu Gotouge
+2
+19
+Jujutsu Kaisen
+8.75
+Gege Akutami
+1
+20
+Spy x Family
+7.25
+Tatsuya Endo
+1
+21
+My Hero Academia
+7.00
+Kohei Horikoshi
+1
+22
+Bleach
+6.75
+Tite Kubo
+1
+23
+Slam Dunk
+6.25
+Takehiko Inoue
+1
+24
+Death Note
+7.80
+Tsugumi Ohba
+1
+25
+Fullmetal Alchemist
+7.90
+Hiromu Arakawa
+1
