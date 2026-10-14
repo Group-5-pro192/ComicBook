@@ -64,7 +64,15 @@ public class ComicBookManagement {
             if (findById(id) == null) break;
             System.out.println("ID " + id + " already exists. Please enter another ID.");
         }
-        String title = readNonEmpty(sc, "Enter title: ");
+        String title, author;
+        int volume;
+        while (true) {
+            title = readNonEmpty(sc, "Enter title: ");
+            author = readNonEmpty(sc, "Enter author: ");
+            volume = readPositiveInt(sc, "Enter volume: ");
+            if (!isDuplicate(title, author, volume)) break;
+            System.out.println("This book (same title, author and volume) already exists. Please re-enter title, author and volume.");
+        }
         double price;
         while (true) {
             System.out.print("Enter rental price: ");
@@ -75,11 +83,31 @@ public class ComicBookManagement {
             }
             System.out.println("Price must be a number greater than 0.");
         }
-        String author = readNonEmpty(sc, "Enter author: ");
-        int volume = readPositiveInt(sc, "Enter volume: ");
 
         comicList.add(new ComicBook(id, title, price, author, volume));
         System.out.println("Comic book added successfully.");
+        displayAll();
+    }
+
+    private boolean isDuplicate(String title, String author, int volume) {
+        for (ComicBook c : comicList) {
+            if (c.getTitle().equalsIgnoreCase(title) && c.getAuthor().equalsIgnoreCase(author)
+                    && c.getVolume() == volume) return true;
+        }
+        return false;
+    }
+
+    // shortcut: fixed column widths, a title/author longer than 30/25 chars shifts that row
+    public void displayAll() {
+        String line = "+------+--------------------------------+------------+---------------------------+--------+";
+        System.out.println(line);
+        System.out.printf("| %4s | %-30s | %10s | %-25s | %6s |%n", "ID", "Title", "Price", "Author", "Volume");
+        System.out.println(line);
+        for (ComicBook c : comicList) {
+            System.out.printf(Locale.US, "| %4d | %-30s | %10.2f | %-25s | %6d |%n",
+                    c.getId(), c.getTitle(), c.getBookRentalPrice(), c.getAuthor(), c.getVolume());
+        }
+        System.out.println(line);
     }
 
     private ComicBook findById(int id) {
