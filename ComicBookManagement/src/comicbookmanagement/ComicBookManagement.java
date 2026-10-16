@@ -116,6 +116,37 @@ public class ComicBookManagement {
         System.out.println("Comic book added successfully.");
         displayAll();
     }
+    /**
+     * Function 2: Search book by title.
+     */
+    public void searchByTitle(Scanner sc) {
+        System.out.print("Enter comic book title to search: ");
+        String query = sc.nextLine().toLowerCase().trim();
+        boolean isFound = false;
+        int count = 0;
+
+        for (ComicBook c : comicList) {
+            if (c.getTitle().toLowerCase().contains(query)) {
+                if (!isFound) {
+                   String line = "+------+--------------------------------+------------+---------------------------+--------+";
+                    System.out.println(line);
+                    System.out.printf("| %4s | %-30s | %10s | %-25s | %6s |%n", "ID", "Title", "Price", "Author", "Volume");
+                    System.out.println(line);
+                    isFound = true;
+                }
+                    System.out.printf(Locale.US, "| %4d | %-30s | %10s | %-25s | %6d |%n",
+                        c.getId(), c.getTitle(), String.format(Locale.US, "$%.2f", c.getBookRentalPrice()), c.getAuthor(), c.getVolume());
+                count++;
+            }
+        }
+
+        if (isFound) {
+            System.out.println("+------+--------------------------------+------------+---------------------------+--------+");
+            System.out.println("Found " + count + " comic book(s) matching your search.");
+        } else {
+            System.out.println("No comic book found with the given title.");
+        }
+    }
 
     private boolean isDuplicate(String title, String author, int volume) {
         for (ComicBook c : comicList) {
@@ -295,6 +326,8 @@ public class ComicBookManagement {
                         manager.addComicBook(sc);
                         break;
                     case 2:
+                        manager.searchByTitle(); 
+                        break;
                     case 3:
                     case 4:
                     case 5:
