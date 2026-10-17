@@ -405,38 +405,39 @@ public class ComicBookManagement {
     }
 
     /**
-     * Function 6: About Us Displays comprehensive project and team member information.
+     * Function 6: About Us
+     * Displays comprehensive project and team member information with updated assigned tasks.
      */
     public static void displayAboutUs() {
-        System.out.println("\n+---------------------------------------------------------------------------------------------------+");
-        System.out.println("|                                        ABOUT US - PROJECT INFO                                    |");
-        System.out.println("+---------------------------------------------------------------------------------------------------+");
-        System.out.printf("| %-97s |%n", " Project       : Comic Book Rental Shop Management - Group Assignment");
-        System.out.println("+---------------------------------------------------------------------------------------------------+");
-        System.out.println("|  1. University : FPT University Campus Can Tho                                                    |");
-        System.out.println("|  2. College    : Information Technology College - Software Engineering Department                 |");
-        System.out.println("|  3. Subject    : PRO192 - Object-Oriented Programming                                             |");
-        System.out.println("|  4. Class      : SE2102                                                                           |");
-        System.out.println("|  5. Mentor     : Vo Hong Khanh                                                                    |");
-        System.out.println("|  6. Group      : Group 05                                                                         |");
-        System.out.println("+---------------------------------------------------------------------------------------------------+");
-        System.out.println("|                                           TEAM MEMBERS                                            |");
-        System.out.println("+-----+-----------+------------------------------+--------------------+-----------------------------+");
-        System.out.printf("| %-3s | %-9s | %-28s | %-18s | %-27s |\n", "No.", "ID", "Full Name", "Role", "Assigned Task");
-        System.out.println("+-----+-----------+------------------------------+--------------------+-----------------------------+");
+        System.out.println("\n+----------------------------------------------------------------------------------------------------------------------------+");
+        System.out.println("|                                                  ABOUT US - PROJECT INFO                                                   |");
+        System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
+        System.out.printf("| %-122s |%n", " Project       : Comic Book Rental Shop Management - Group Assignment");
+        System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
+        System.out.println("|  1. University : FPT University Campus Can Tho                                                                             |");
+        System.out.println("|  2. College    : Information Technology College - Software Engineering Department                                          |");
+        System.out.println("|  3. Subject    : PRO192 - Object-Oriented Programming                                                                      |");
+        System.out.println("|  4. Class      : SE2102                                                                                                    |");
+        System.out.println("|  5. Mentor     : Vo Hong Khanh                                                                                             |");
+        System.out.println("|  6. Group      : Group 05                                                                                                  |");
+        System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
+        System.out.println("|                                                        TEAM MEMBERS                                                        |");
+        System.out.println("+-----+-----------+------------------------------+--------------+------------------------------------------------------------+");
+        System.out.printf("| %-3s | %-9s | %-28s | %-12s | %-58s |\n", "No.", "ID", "Full Name", "Role", "Assigned Tasks");
+        System.out.println("+-----+-----------+------------------------------+--------------+------------------------------------------------------------+");
 
-        System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n",
-                1, "CE210032", "Ngo Thi Thao Huynh", "Leader", "Testing & Data");
-        System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n",
-                2, "CE210356", "Ngo Ngoc Anh Thu", "Secretary", "Class ComicBookManagement");
-        System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n",
-                3, "CE210006", "Nguyen Huu Loc", "Member", "About Us");
-        System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n",
-                4, "CE210031", "Le Ngoc Ngan", "Member", "Menu");
-        System.out.printf("| %-3d | %-9s | %-28s | %-18s | %-27s |\n",
-                5, "CE190701", "Dinh Minh Tien", "Member", "Class ComicBook");
+        System.out.printf("| %-3d | %-9s | %-28s | %-12s | %-58s |\n",
+                1, "CE210032", "Ngo Thi Thao Huynh", "Leader", "Testing & Data, Function 4: Update Book Rental Price");
+        System.out.printf("| %-3d | %-9s | %-28s | %-12s | %-58s |\n",
+                2, "CE210356", "Ngo Ngoc Anh Thu", "Secretary", "Class ComicBookManagement, Function 5: Delete Comic Book");
+        System.out.printf("| %-3d | %-9s | %-28s | %-12s | %-58s |\n",
+                3, "CE210006", "Nguyen Huu Loc", "Member", "Function 3: Search Book by Author, Function 6: About Us");
+        System.out.printf("| %-3d | %-9s | %-28s | %-12s | %-58s |\n",
+                4, "CE210031", "Le Ngoc Ngan", "Member", "Menu, Function 2: Search Book by Title");
+        System.out.printf("| %-3d | %-9s | %-28s | %-12s | %-58s |\n",
+                5, "CE190701", "Dinh Minh Tien", "Member", "Class ComicBook, Function 1: Add New Comic Book");
 
-        System.out.println("+-----+-----------+------------------------------+--------------------+-----------------------------+");
+        System.out.println("+-----+-----------+------------------------------+--------------+------------------------------------------------------------+");
         System.out.println();
     }
 
