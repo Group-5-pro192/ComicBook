@@ -267,6 +267,53 @@ public class ComicBookManagement {
         displayAll();
     }
 
+/**
+     * Function 5: Delete comic book. Displays inventory, prompts for ID,
+     * asks for confirmation (Yes/No), and deletes if confirmed.
+     */
+    public void deleteComicBook(Scanner sc) {
+        if (comicList.isEmpty()) {
+            System.out.println("The comic book list is empty. There is nothing to delete.");
+            return;
+        }
+
+        displayAll();
+
+        ComicBook target = null;
+        while (true) {
+            System.out.print("Enter comic book ID to delete: ");
+            String idInput = sc.nextLine().trim();
+            if (idInput.isEmpty()) {
+                System.out.println("The ID cannot be empty. Please enter an ID.");
+                continue;
+            }
+            target = findById(idInput);
+            if (target != null) {
+                break;
+            }
+            System.out.println("Comic book with ID \"" + idInput + "\" was not found. Please enter again.");
+        }
+
+        System.out.println("Found comic book: \"" + target.getTitle() + "\".");
+        
+        while (true) {
+            System.out.print("Are you sure you want to delete this comic book? (Yes/No): ");
+            String confirm = sc.nextLine().trim().toLowerCase();
+            
+            if (confirm.equals("yes") || confirm.equals("y")) {
+                comicList.remove(target);
+                System.out.println("Comic book deleted successfully.");
+                displayAll();
+                break;
+            } else if (confirm.equals("no") || confirm.equals("n")) {
+                System.out.println("Deletion cancelled. Returning to Menu.");
+                break;
+            } else {
+                System.out.println("Unrecognized response. Please enter 'Yes' to delete or 'No' to cancel.");
+            }
+        }
+    }
+    
     private int readInt(Scanner sc, String field, int max) {
         while (true) {
             System.out.print("Enter " + field + ": ");
