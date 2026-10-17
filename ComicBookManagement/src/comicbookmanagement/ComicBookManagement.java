@@ -127,6 +127,10 @@ public class ComicBookManagement {
     public void searchByTitle(Scanner sc) {
         System.out.print("Enter comic book title to search: ");
         String query = sc.nextLine().toLowerCase().trim();
+        if (query.isEmpty()) {
+        System.out.println("Search query cannot be empty.");
+        return; 
+    }
         boolean isFound = false;
         int count = 0;
 
