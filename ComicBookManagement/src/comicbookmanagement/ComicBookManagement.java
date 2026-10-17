@@ -168,9 +168,9 @@ public class ComicBookManagement {
         String line = "+-----+------+--------------------------------+------------+---------------------------+--------+";
         System.out.println(line);
         System.out.printf("| %3s | %4s | %-30s | %10s | %-25s | %6s |%n", "No.", "ID", "Title", "Price", "Author", "Volume");
-        System.out.println(line);
         int no = 1;
         for (ComicBook c : comicList) {
+            System.out.println(line);
             System.out.printf(Locale.US, "| %3d | %4d | %-30s | %10s | %-25s | %6d |%n",
                     no++, c.getId(), c.getTitle(), String.format(Locale.US, "$%.2f", c.getBookRentalPrice()), c.getAuthor(), c.getVolume());
         }
