@@ -157,6 +157,44 @@ public class ComicBookManagement {
         }
     }
 
+    /**
+     * Function 3: Search book by author.
+     */
+    public void searchByAuthor(Scanner sc) {
+        System.out.print("Enter author name to search: ");
+        String query = sc.nextLine().trim();
+        if (query.isEmpty()) {
+            System.out.println("Search query cannot be empty.");
+            return;
+        }
+        
+        boolean isFound = false;
+        int count = 0;
+
+        for (ComicBook c : comicList) {
+            // Using equalsIgnoreCase as required by the assignment rule for author search
+            if (c.getAuthor().equalsIgnoreCase(query)) {
+                if (!isFound) {
+                    String line = "+------+--------------------------------+------------+---------------------------+--------+";
+                    System.out.println(line);
+                    System.out.printf("| %4s | %-30s | %10s | %-25s | %6s |%n", "ID", "Title", "Price", "Author", "Volume");
+                    System.out.println(line);
+                    isFound = true;
+                }
+                System.out.printf(Locale.US, "| %4d | %-30s | %10s | %-25s | %6d |%n",
+                        c.getId(), c.getTitle(), String.format(Locale.US, "$%.2f", c.getBookRentalPrice()), c.getAuthor(), c.getVolume());
+                count++;
+            }
+        }
+
+        if (isFound) {
+            System.out.println("+------+--------------------------------+------------+---------------------------+--------+");
+            System.out.println("Found " + count + " comic book(s) matching the author.");
+        } else {
+            System.out.println("No comic book found with the given author.");
+        }
+    }
+    
     private boolean isDuplicate(String title, String author, int volume) {
         for (ComicBook c : comicList) {
             if (c.getTitle().equalsIgnoreCase(title) && c.getAuthor().equalsIgnoreCase(author)
@@ -471,6 +509,7 @@ public class ComicBookManagement {
                         manager.searchByTitle(sc);
                         break;
                     case 3:
+                        manager.searchByAuthor(sc);
                         break;
                     case 4:
                         manager.updateBookRentalPrice(sc);
