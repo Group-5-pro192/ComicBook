@@ -12,9 +12,9 @@ import java.util.Scanner;
 
 public class ComicBookManagement {
 
-    // Declare ArrayList to store comic books and set the file path
+    // Declare ArrayList to store comic books and set the constant file name
     private ArrayList<ComicBook> comicList = new ArrayList<>();
-    private String dataFilePath = "data/ComicBooks.txt";
+    private final String FILE_NAME = "data/ComicBooks.txt";
 
     // Input limits, chosen so every value fits its column in displayAll()
     private static final int MAX_NUMBER = 9999;
@@ -33,28 +33,20 @@ public class ComicBookManagement {
     }
 
     /**
-     * Loads data from file into the ArrayList. File structure: - Line 1: Total number of comic books (N) - Every subsequent 5 lines represent 1 comic book: ID, Title, Price, Author, Volume
+     * Loads data from FILE_NAME into the ArrayList. File structure: - Line 1: Total number of comic books (N) - Every subsequent 5 lines represent 1 comic book: ID, Title, Price, Author, Volume
      */
     public void loadData() {
-        File file = new File("ComicBooks.txt");
-        if (file.exists()) {
-            dataFilePath = "ComicBooks.txt";
-        } else {
-            file = new File("data/ComicBooks.txt");
-            if (file.exists()) {
-                dataFilePath = "data/ComicBooks.txt";
-            } else {
-                dataFilePath = "data/ComicBooks.txt";
-                System.out.println("Data file 'ComicBooks.txt' not found. Starting with empty list.");
+        File file = new File(FILE_NAME);
+        if (!file.exists()) {
+            System.out.println("Data file '" + FILE_NAME + "' not found. Starting with empty list.");
                 return;
-            }
         }
 
         List<String> lines;
         try {
             lines = Files.readAllLines(file.toPath());
         } catch (IOException e) {
-            System.out.println("Cannot read data file '" + dataFilePath + "': " + e.getMessage() + ". Starting with an empty list.");
+            System.out.println("Cannot read data file '" + FILE_NAME + "': " + e.getMessage() + ". Starting with an empty list.");
             return;
         }
         if (lines.isEmpty()) {
@@ -66,7 +58,7 @@ public class ComicBookManagement {
         } catch (NumberFormatException e) {
             // Count the records from the file instead, so quitting does not overwrite them with an empty list
             total = (lines.size() - 1) / 5;
-            System.out.println("The first line of '" + dataFilePath + "' is not a valid number of comic books."
+            System.out.println("The first line of '" + FILE_NAME + "' is not a valid number of comic books."
                     + " Reading " + total + " comic book(s) found in the file instead.");
         }
 
@@ -83,17 +75,17 @@ public class ComicBookManagement {
                     throw new NumberFormatException();
                 }
                 if (findById(id) != null) {
-                    System.out.println("Comic book #" + (i + 1) + " in '" + dataFilePath + "' was skipped: ID " + id
+                    System.out.println("Comic book #" + (i + 1) + " in '" + FILE_NAME + "' was skipped: ID " + id
                             + " is used more than once.");
                     continue;
                 }
                 comicList.add(new ComicBook(id, title, price, author, volume));
             } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                System.out.println("Comic book #" + (i + 1) + " in '" + dataFilePath + "' (lines " + (start + 1) + " to "
+                System.out.println("Comic book #" + (i + 1) + " in '" + FILE_NAME + "' (lines " + (start + 1) + " to "
                         + (start + 5) + ") is missing or invalid and was skipped.");
             }
         }
-        System.out.println("Loaded " + comicList.size() + " comic book(s) from '" + dataFilePath + "'.");
+        System.out.println("Loaded " + comicList.size() + " comic book(s) from '" + FILE_NAME + "'.");
     }
 
     /**
@@ -203,20 +195,14 @@ public class ComicBookManagement {
         }
     }
     
-    private boolean isDuplicate(int excludeId, String title, String author, int volume) {
+    private boolean isDuplicate(String title, String author, int volume) {
         for (ComicBook c : comicList) {
-            if (c.getId() != excludeId
-                    && c.getTitle().equalsIgnoreCase(title)
-                    && c.getAuthor().equalsIgnoreCase(author)
+            if (c.getTitle().equalsIgnoreCase(title) && c.getAuthor().equalsIgnoreCase(author)
                     && c.getVolume() == volume) {
                 return true;
             }
         }
         return false;
-    }
-
-    private boolean isDuplicate(String title, String author, int volume) {
-        return isDuplicate(-1, title, author, volume);
     }
 
     // Column widths match the input limits (TITLE_MAX, AUTHOR_MAX, MAX_NUMBER, MAX_PRICE)
@@ -528,15 +514,14 @@ public class ComicBookManagement {
     }
 
     /**
-     * Saves the ArrayList to dataFilePath using the same format as loadData().
+     * Saves the ArrayList to FILE_NAME using the same format as loadData().
      */
     public void saveData() {
-        File targetFile = new File(dataFilePath);
-        File parent = targetFile.getParentFile();
+        File parent = new File(FILE_NAME).getParentFile();
         if (parent != null) {
             parent.mkdirs();
         }
-        try (PrintWriter pw = new PrintWriter(targetFile)) {
+        try (PrintWriter pw = new PrintWriter(FILE_NAME)) {
             pw.println(comicList.size());
             for (ComicBook c : comicList) {
                 pw.println(c.getId());
@@ -560,12 +545,12 @@ public class ComicBookManagement {
         System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
         System.out.printf("| %-122s |%n", " Project       : Comic Book Rental Shop Management - Group Assignment");
         System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
-        System.out.printf("|  %-122s |%n", "1. University : FPT University Campus Can Tho");
-        System.out.printf("|  %-122s |%n", "2. College    : Information Technology College - Software Engineering Department");
-        System.out.printf("|  %-122s |%n", "3. Subject    : PRO192 - Object-Oriented Programming (CEA201 in prompt)");
-        System.out.printf("|  %-122s |%n", "4. Class      : SE2102");
-        System.out.printf("|  %-122s |%n", "5. Mentor     : Vo Hong Khanh");
-        System.out.printf("|  %-122s |%n", "6. Group      : Group 05");
+        System.out.println("|  1. University : FPT University Campus Can Tho                                                                             |");
+        System.out.println("|  2. College    : Information Technology College - Software Engineering Department                                          |");
+        System.out.println("|  3. Subject    : PRO192 - Object-Oriented Programming                                                                      |");
+        System.out.println("|  4. Class      : SE2102                                                                                                    |");
+        System.out.println("|  5. Mentor     : Vo Hong Khanh                                                                                             |");
+        System.out.println("|  6. Group      : Group 05                                                                                                  |");
         System.out.println("+----------------------------------------------------------------------------------------------------------------------------+");
         System.out.println("|                                                        TEAM MEMBERS                                                        |");
         System.out.println("+-----+-----------+------------------------------+--------------+------------------------------------------------------------+");
