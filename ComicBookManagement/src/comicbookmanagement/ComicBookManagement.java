@@ -515,7 +515,7 @@ public class ComicBookManagement {
                         manager.updateBookRentalPrice(sc);
                         break;
                     case 5:
-                        System.out.println("This function is not implemented yet.");
+                        manager.deleteComicBook(sc);
                         break;
                     case 6:
                         displayAboutUs();
