@@ -376,7 +376,17 @@ public class ComicBookManagement {
             }
 
             // Check duplicate with another book
-            if (isDuplicate(target.getId(), newTitle, newAuthor, newVolume)) {
+            boolean isDup = false;
+            for (ComicBook c : comicList) {
+                if (c.getId() != target.getId()
+                        && c.getTitle().equalsIgnoreCase(newTitle)
+                        && c.getAuthor().equalsIgnoreCase(newAuthor)
+                        && c.getVolume() == newVolume) {
+                    isDup = true;
+                    break;
+                }
+            }
+            if (isDup) {
                 System.out.println("The book \"" + newTitle + "\" by " + newAuthor + ", volume " + newVolume
                         + " already exists in another record. Please re-enter the information.");
                 continue;
