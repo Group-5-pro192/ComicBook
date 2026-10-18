@@ -10,7 +10,7 @@ package comicbookmanagement;
  * @author LENOVO X1CARBON
  */
 public class ComicBook {
-    
+
     private int id;
     private String title;
     private double bookRentalPrice;
@@ -19,7 +19,7 @@ public class ComicBook {
 
     public ComicBook() {
     }
-    
+
     public ComicBook(int id, String title, double bookRentalPrice, String author, int volume) {
         this.id = id;
         this.title = title;
