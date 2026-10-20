@@ -426,7 +426,7 @@ public class ComicBookManagement {
     private double readPrice(Scanner sc, double current) {
         double price = -1; // stays -1 until a price from 0 to MAX_PRICE is entered
         while (price < 0) {
-            System.out.print(current < 0 ? "Enter rental price: "
+            System.out.print(current < 0 ? "Enter rental price($): "
                     : "Enter new rental price (current: " + formatPrice(current) + ", press Enter to keep): ");
             String s = readLine(sc);
             if (s.isEmpty() && current >= 0) {
