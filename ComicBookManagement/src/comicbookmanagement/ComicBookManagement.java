@@ -536,9 +536,7 @@ public class ComicBookManagement {
         // Input stream closed (Ctrl+D / Ctrl+Z): save and exit instead of crashing
         try {
             do {
-                System.out.println("\n===================================================");
                 System.out.println("     COMIC BOOK RENTAL SHOP # SE2102-Group05");
-                System.out.println("===================================================");
                 System.out.println("1. Add new comic book.");
                 System.out.println("2. Search book by title.");
                 System.out.println("3. Search book of an author.");
@@ -546,7 +544,6 @@ public class ComicBookManagement {
                 System.out.println("5. Delete comic book.");
                 System.out.println("6. About us.");
                 System.out.println("7. Quit.");
-                System.out.println("===================================================");
 
                 choice = getValidChoice(sc);
 
