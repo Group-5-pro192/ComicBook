@@ -14,10 +14,12 @@ import java.util.Scanner;
 public class ComicBookManagement {
 
     // Declare ArrayList to store comic books and set the constant file name
-    private ArrayList<ComicBook> comicList = new ArrayList<>();
+    private final ArrayList<ComicBook> comicList = new ArrayList<>();
     private final String FILE_NAME = "data/ComicBooks.txt";
     // Set when the data file exists but cannot be read, so quitting does not overwrite it with an empty list
     private boolean loadFailed = false;
+    // Number of books loaded at start, compared with the saved number when quitting
+    private int loadedCount = 0;
 
     // Input limits, chosen so every value fits its column in displayAll()
     private static final int MAX_NUMBER = 9999;
@@ -25,14 +27,9 @@ public class ComicBookManagement {
     private static final int TITLE_MAX = 30;
     private static final int AUTHOR_MAX = 25;
     private static final String TITLE_PATTERN = "[A-Za-z0-9][A-Za-z0-9 .,:'!?&/()#+;\"-]*";
-    private static final String AUTHOR_PATTERN = "[A-Za-z][A-Za-z .'-]*";
+    private static final String AUTHOR_PATTERN = "[A-Za-z]+( [A-Za-z]+)*";
 
     public ComicBookManagement() {
-    }
-
-    // Getter for team members to access the comic book list
-    public ArrayList<ComicBook> getComicList() {
-        return comicList;
     }
 
     /**
@@ -58,6 +55,7 @@ public class ComicBookManagement {
             return;
         }
         if (lines.isEmpty()) {
+            System.out.println("Data file '" + FILE_NAME + "' is empty. Starting with an empty list.");
             return;
         }
         int total;
@@ -67,7 +65,14 @@ public class ComicBookManagement {
             // Count the records from the file instead, so quitting does not overwrite them with an empty list
             total = (lines.size() - 1) / 5;
             System.out.println("The first line of '" + FILE_NAME + "' is not a valid number of comic books."
-                    + " Reading " + total + " comic book(s) found in the file instead.");
+                    + " Reading " + books(total) + " found in the file instead.");
+        }
+        // A count smaller than the records in the file would drop the extra books on save
+        int inFile = (lines.size() - 1) / 5;
+        if (total < inFile) {
+            System.out.println("The first line of '" + FILE_NAME + "' says " + books(total) + ", but the file has "
+                    + inFile + ". Reading all " + books(inFile) + ".");
+            total = inFile;
         }
 
         // One bad record is skipped instead of stopping the load, so the remaining books are not lost on save
@@ -93,17 +98,18 @@ public class ComicBookManagement {
                         + (start + 5) + ") is missing or invalid and was skipped.");
             }
         }
-        System.out.println("Loaded " + comicList.size() + " comic book(s) from '" + FILE_NAME + "'.");
+        loadedCount = comicList.size();
+        System.out.println("Loaded " + books(loadedCount) + " from '" + FILE_NAME + "'.");
     }
 
     /**
      * Function 1: Add new comic book. Reads and validates each field; the ID must be unique.
      */
     public void addComicBook(Scanner sc) {
-        int id = readInt(sc, "ID", MAX_NUMBER);
+        int id = readInt(sc, "ID");
         while (findById(id) != null) {
             System.out.println("ID " + id + " is already used by another comic book. Please enter a different ID.");
-            id = readInt(sc, "ID", MAX_NUMBER);
+            id = readInt(sc, "ID");
         }
         String title, author;
         int volume;
@@ -113,15 +119,15 @@ public class ComicBookManagement {
                     "letters, digits, spaces and common punctuation (. , : ' - ! ? & / ( ) # + ; \")"
                     + " and must start with a letter or digit (example: One Piece)");
             author = readText(sc, "author", AUTHOR_MAX, AUTHOR_PATTERN,
-                    "English letters, spaces and . ' - and must start with a letter (example: Eiichiro Oda)");
-            volume = readInt(sc, "volume", MAX_NUMBER);
+                    "English letters and spaces (no digits or special characters, example: Eiichiro Oda)");
+            volume = readInt(sc, "volume");
             duplicate = isDuplicate(title, author, volume);
             if (duplicate) {
                 System.out.println("The book \"" + title + "\" by " + author + ", volume " + volume
                         + " already exists. Please enter the title, author and volume again.");
             }
         } while (duplicate);
-        double price = readPrice(sc);
+        double price = readPrice(sc, -1);
 
         comicList.add(new ComicBook(id, title, price, author, volume));
         System.out.println("Comic book added successfully.");
@@ -132,25 +138,28 @@ public class ComicBookManagement {
      * Function 2: Search book by title.
      */
     public void searchByTitle(Scanner sc) {
+        if (isListEmpty("search")) {
+            return;
+        }
         System.out.print("Enter comic book title to search: ");
-        String query = sc.nextLine().trim().replaceAll("\\s+", " ").toLowerCase();
+        String query = readLine(sc);
         if (query.isEmpty()) {
-            System.out.println("Search query cannot be empty.");
+            System.out.println("The title to search cannot be empty. Returning to the main menu.");
             return;
         }
 
         ArrayList<ComicBook> found = new ArrayList<>();
         for (ComicBook c : comicList) {
-            if (c.getTitle().toLowerCase().contains(query)) {
+            if (c.getTitle().toLowerCase().contains(query.toLowerCase())) {
                 found.add(c);
             }
         }
 
         if (found.isEmpty()) {
-            System.out.println("No comic book found with the given title.");
+            System.out.println("No comic book has a title containing \"" + query + "\".");
         } else {
-            printTable(found, false);
-            System.out.println("Found " + found.size() + " comic book(s) matching your search.");
+            printTable(found);
+            System.out.println("Found " + books(found.size()) + " with a title containing \"" + query + "\".");
         }
     }
 
@@ -158,10 +167,13 @@ public class ComicBookManagement {
      * Function 3: Search book by author.
      */
     public void searchByAuthor(Scanner sc) {
+        if (isListEmpty("search")) {
+            return;
+        }
         System.out.print("Enter author name to search: ");
-        String query = sc.nextLine().trim().replaceAll("\\s+", " ");
+        String query = readLine(sc);
         if (query.isEmpty()) {
-            System.out.println("Search query cannot be empty.");
+            System.out.println("The author name to search cannot be empty. Returning to the main menu.");
             return;
         }
 
@@ -174,10 +186,10 @@ public class ComicBookManagement {
         }
 
         if (found.isEmpty()) {
-            System.out.println("No comic book found with the given author.");
+            System.out.println("No comic book was found by the author \"" + query + "\".");
         } else {
-            printTable(found, false);
-            System.out.println("Found " + found.size() + " comic book(s) by this author.");
+            printTable(found);
+            System.out.println("Found " + books(found.size()) + " by the author \"" + query + "\".");
         }
     }
 
@@ -192,12 +204,12 @@ public class ComicBookManagement {
     }
 
     public void displayAll() {
-        printTable(comicList, true);
-        System.out.println("Total: " + comicList.size() + " comic book(s).");
+        printTable(comicList);
+        System.out.println("Total: " + books(comicList.size()) + ".");
     }
 
     // Columns widen to fit the longest value, so long data loaded from the file cannot break the table
-    private void printTable(List<ComicBook> books, boolean numbered) {
+    private void printTable(List<ComicBook> books) {
         int noW = Math.max(3, String.valueOf(books.size()).length());
         int idW = 4, titleW = 30, priceW = 10, authorW = 25, volumeW = 6;
         for (ComicBook c : books) {
@@ -207,26 +219,41 @@ public class ComicBookManagement {
             authorW = Math.max(authorW, c.getAuthor().length());
             volumeW = Math.max(volumeW, String.valueOf(c.getVolume()).length());
         }
-        String line = (numbered ? "+" + dashes(noW + 2) : "") + "+" + dashes(idW + 2) + "+" + dashes(titleW + 2)
+        String line = "+" + dashes(noW + 2) + "+" + dashes(idW + 2) + "+" + dashes(titleW + 2)
                 + "+" + dashes(priceW + 2) + "+" + dashes(authorW + 2) + "+" + dashes(volumeW + 2) + "+";
-        String noFormat = numbered ? "| %" + noW + "s " : "";
-        String format = "| %" + idW + "s | %-" + titleW + "s | %" + priceW + "s | %-" + authorW + "s | %" + volumeW + "s |%n";
+        String noFormat = "| %" + noW + "s ";
+        String format = "| %-" + idW + "s | %-" + titleW + "s | %" + priceW + "s | %-" + authorW + "s | %" + volumeW + "s |%n";
 
         System.out.println(line);
-        System.out.print(String.format(noFormat, "No."));
+        System.out.printf(noFormat, "No.");
         System.out.printf(format, "ID", "Title", "Price", "Author", "Volume");
         System.out.println(line);
         int no = 1;
         for (ComicBook c : books) {
-            System.out.print(String.format(noFormat, no++));
+            System.out.printf(noFormat, no++);
             System.out.printf(format, c.getId(), c.getTitle(), formatPrice(c.getBookRentalPrice()), c.getAuthor(), c.getVolume());
-            if (numbered) {
-                System.out.println(line);
-            }
-        }
-        if (!numbered) {
             System.out.println(line);
         }
+    }
+
+    // "1 comic book", "2 comic books"
+    private static String books(int n) {
+        return n + (n == 1 ? " comic book" : " comic books");
+    }
+
+    // Shared by the functions that need at least one book, e.g. when the data file was deleted
+    private boolean isListEmpty(String action) {
+        if (comicList.isEmpty()) {
+            System.out.println("The comic book list is empty (no data in '" + FILE_NAME + "'). There is nothing to "
+                    + action + ". Please add a comic book with function 1 first.");
+            return true;
+        }
+        return false;
+    }
+
+    // Copied text can hold tabs, non-breaking or zero-width spaces that trim() keeps; turn them into one plain space
+    private static String readLine(Scanner sc) {
+        return sc.nextLine().replaceAll("[\\s\\p{Z}\\u200B\\uFEFF]+", " ").trim();
     }
 
     private static String formatPrice(double price) {
@@ -270,8 +297,7 @@ public class ComicBookManagement {
      * price (pressing Enter keeps the current price), then shows the updated list.
      */
     public void updateBookRentalPrice(Scanner sc) {
-        if (comicList.isEmpty()) {
-            System.out.println("The comic book list is empty. There is nothing to update.");
+        if (isListEmpty("update")) {
             return;
         }
 
@@ -281,29 +307,7 @@ public class ComicBookManagement {
 
         System.out.println("Found comic book: \"" + target.getTitle() + "\" (ID: " + target.getId() + ").");
 
-        double newPrice = 0; // stays 0 until Enter or a price from 0.01 to MAX_PRICE is entered
-        do {
-            System.out.print("Enter new rental price (current: "
-                    + formatPrice(target.getBookRentalPrice()) + ", press Enter to keep): ");
-            String pInput = sc.nextLine().trim();
-            if (pInput.isEmpty()) {
-                newPrice = target.getBookRentalPrice();
-                System.out.println("The rental price remains unchanged.");
-            } else if (!pInput.matches("\\d{1,7}(\\.\\d{1,2})?")) {
-                System.out.println("\"" + pInput + "\" is not a valid rental price. Please enter a positive number with at most"
-                        + " 2 decimal places, using a dot as the decimal separator (example: 7.50).");
-            } else {
-                double p = Double.parseDouble(pInput);
-                if (p > 0 && p <= MAX_PRICE) {
-                    newPrice = p;
-                } else {
-                    System.out.println("The rental price must be from 0.01 to "
-                            + String.format(Locale.US, "%.2f", MAX_PRICE) + ". You entered " + pInput + ".");
-                }
-            }
-        } while (newPrice == 0);
-
-        target.setBookRentalPrice(newPrice);
+        target.setBookRentalPrice(readPrice(sc, target.getBookRentalPrice()));
 
         System.out.println("Comic book updated successfully.");
         displayAll();
@@ -314,8 +318,7 @@ public class ComicBookManagement {
      * asks for confirmation (Yes/No), and deletes if confirmed.
      */
     public void deleteComicBook(Scanner sc) {
-        if (comicList.isEmpty()) {
-            System.out.println("The comic book list is empty. There is nothing to delete.");
+        if (isListEmpty("delete")) {
             return;
         }
 
@@ -328,7 +331,7 @@ public class ComicBookManagement {
         String confirm;
         do {
             System.out.print("Are you sure you want to delete this comic book? (Yes/No): ");
-            confirm = sc.nextLine().trim().toLowerCase();
+            confirm = readLine(sc).toLowerCase();
             if (!confirm.matches("yes|y|no|n")) {
                 System.out.println("Unrecognized response. Please enter 'Yes' to delete or 'No' to cancel.");
             }
@@ -348,7 +351,7 @@ public class ComicBookManagement {
         ComicBook target = null;
         do {
             System.out.print("Enter comic book ID to " + action + ": ");
-            String idInput = sc.nextLine().trim();
+            String idInput = readLine(sc);
             if (idInput.isEmpty()) {
                 System.out.println("The ID cannot be empty. Please enter an ID.");
             } else {
@@ -361,22 +364,23 @@ public class ComicBookManagement {
         return target;
     }
 
-    private int readInt(Scanner sc, String field, int max) {
+    private int readInt(Scanner sc, String field) {
+        int max = MAX_NUMBER;
         int n = 0; // stays 0 until a value from 1 to max is entered
         while (n == 0) {
             System.out.print("Enter " + field + ": ");
-            String s = sc.nextLine().trim();
+            String s = readLine(sc);
             if (s.isEmpty()) {
-                System.out.println("The " + field + " cannot be empty. Please enter a whole number from 1 to " + max + ".");
+                System.out.println("The " + field + " cannot be empty. Please enter a positive integer from 1 to " + max + ".");
             } else if (!s.matches("\\d{1,9}")) {
-                System.out.println("\"" + s + "\" is not a valid " + field
-                        + ". Please enter digits only (no letters, signs, spaces or decimal point), from 1 to " + max + ".");
+                System.out.println("\"" + s + "\" is not a valid " + field + ". Please enter a positive integer from 1 to "
+                        + max + " (digits only, no letters, signs, spaces or decimal point).");
             } else {
                 int value = Integer.parseInt(s);
                 if (value >= 1 && value <= max) {
                     n = value;
                 } else {
-                    System.out.println("The " + field + " must be from 1 to " + max + ". You entered " + value + ".");
+                    System.out.println("The " + field + " must be a positive integer from 1 to " + max + ". You entered " + value + ".");
                 }
             }
         }
@@ -387,7 +391,7 @@ public class ComicBookManagement {
         String result = null;
         while (result == null) {
             System.out.print("Enter " + field + ": ");
-            String s = sc.nextLine().trim().replaceAll("\\s+", " ");
+            String s = readLine(sc);
             if (s.isEmpty()) {
                 System.out.println("The " + field + " cannot be empty. Please enter the " + field + " of the comic book.");
             } else if (s.length() > maxLength) {
@@ -418,28 +422,42 @@ public class ComicBookManagement {
         return sb.toString();
     }
 
-    private double readPrice(Scanner sc) {
-        double price = 0; // stays 0 until a price from 0.01 to MAX_PRICE is entered
-        while (price == 0) {
-            System.out.print("Enter rental price: ");
-            String s = sc.nextLine().trim();
-            if (s.isEmpty()) {
-                System.out.println("The rental price cannot be empty. Please enter a price from 0.01 to "
+    // current < 0: a new book, the price is required; otherwise Enter keeps the current price (function 4)
+    private double readPrice(Scanner sc, double current) {
+        double price = -1; // stays -1 until a price from 0 to MAX_PRICE is entered
+        while (price < 0) {
+            System.out.print(current < 0 ? "Enter rental price: "
+                    : "Enter new rental price (current: " + formatPrice(current) + ", press Enter to keep): ");
+            String s = readLine(sc);
+            if (s.isEmpty() && current >= 0) {
+                price = current;
+                System.out.println("The rental price remains unchanged.");
+            } else if (s.isEmpty()) {
+                System.out.println("The rental price cannot be empty. Please enter a price from 0 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + ".");
             } else if (!s.matches("\\d{1,7}(\\.\\d{1,2})?")) {
-                System.out.println("\"" + s + "\" is not a valid rental price. Please enter a positive number with at most"
-                        + " 2 decimal places, using a dot as the decimal separator (example: 7.50).");
+                System.out.println("\"" + s + "\" is not a valid rental price. Please enter a number from 0 to "
+                        + String.format(Locale.US, "%.2f", MAX_PRICE) + " with at most 2 decimal places, using a dot"
+                        + " as the decimal separator (example: 7.50).");
             } else {
                 double value = Double.parseDouble(s);
-                if (value > 0 && value <= MAX_PRICE) {
+                if (value <= MAX_PRICE) {
                     price = value;
                 } else {
-                    System.out.println("The rental price must be from 0.01 to "
+                    System.out.println("The rental price must be from 0 to "
                             + String.format(Locale.US, "%.2f", MAX_PRICE) + ". You entered " + s + ".");
                 }
             }
         }
         return price;
+    }
+
+    // e.g. "27 comic books saved (2 more than at start)."
+    public String saveSummary() {
+        int diff = comicList.size() - loadedCount;
+        String change = diff > 0 ? diff + " more than at start"
+                : diff < 0 ? (-diff) + " fewer than at start" : "unchanged since start";
+        return books(comicList.size()) + " saved to '" + FILE_NAME + "' (" + change + ").";
     }
 
     /**
@@ -451,8 +469,9 @@ public class ComicBookManagement {
             return false;
         }
         File parent = new File(FILE_NAME).getParentFile();
-        if (parent != null) {
-            parent.mkdirs();
+        if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
+            System.out.println("Error writing data file: cannot create the folder '" + parent + "'.");
+            return false;
         }
         // UTF-8, the same encoding Files.readAllLines() uses in loadData()
         try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Paths.get(FILE_NAME)))) {
@@ -512,12 +531,14 @@ public class ComicBookManagement {
         ComicBookManagement manager = new ComicBookManagement();
         manager.loadData();
         Scanner sc = new Scanner(System.in);
-        int choice = 0;
+        int choice;
 
         // Input stream closed (Ctrl+D / Ctrl+Z): save and exit instead of crashing
         try {
             do {
-                System.out.println("\n          COMIC BOOK RENTAL SHOP # SE2102-Group05");
+                System.out.println("\n===================================================");
+                System.out.println("     COMIC BOOK RENTAL SHOP # SE2102-Group05");
+                System.out.println("===================================================");
                 System.out.println("1. Add new comic book.");
                 System.out.println("2. Search book by title.");
                 System.out.println("3. Search book of an author.");
@@ -525,6 +546,7 @@ public class ComicBookManagement {
                 System.out.println("5. Delete comic book.");
                 System.out.println("6. About us.");
                 System.out.println("7. Quit.");
+                System.out.println("===================================================");
 
                 choice = getValidChoice(sc);
 
@@ -550,17 +572,15 @@ public class ComicBookManagement {
                     case 7:
                         if (manager.saveData()) {
                             System.out.println("Data saved successfully. Exiting the program. Goodbye!");
+                            System.out.println(manager.saveSummary());
                         } else {
                             System.out.println("Data could not be saved. Exiting the program. Goodbye!");
                         }
                         break;
-                    default:
-                        System.out.println("The number you entered is out of range. Please choose a number between 1 and 7!");
-                        break;
                 }
             } while (choice != 7);
         } catch (NoSuchElementException e) {
-            System.out.println("\nNo more input. " + (manager.saveData() ? "Data saved." : "Data could not be saved.")
+            System.out.println("\nNo more input. " + (manager.saveData() ? manager.saveSummary() : "Data could not be saved.")
                     + " Exiting the program. Goodbye!");
         }
 
@@ -568,14 +588,14 @@ public class ComicBookManagement {
     }
 
     private static int getValidChoice(Scanner sc) {
-        Integer choice = null; // null until the input is a valid integer
+        Integer choice = null; // null until the input is a number from 1 to 7
         while (choice == null) {
-            System.out.print("     Please select a function: ");
-            String input = sc.nextLine().trim();
-            try {
+            System.out.print("Please select a function (1-7): ");
+            String input = readLine(sc);
+            if (input.matches("[1-7]")) {
                 choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Input format error! You must enter a whole number from 1 to 7, not letters or special characters.");
+            } else {
+                System.out.println("\"" + input + "\" is not a valid choice. Please enter a number from 1 to 7.");
             }
         }
         return choice;
