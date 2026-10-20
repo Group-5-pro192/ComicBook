@@ -27,7 +27,7 @@ public class ComicBookManagement {
     private static final int TITLE_MAX = 30;
     private static final int AUTHOR_MAX = 25;
     private static final String TITLE_PATTERN = "[A-Za-z0-9][A-Za-z0-9 .,:'!?&/()#+;\"-]*";
-    private static final String AUTHOR_PATTERN = "[A-Za-z]+( [A-Za-z]+)*";
+    private static final String AUTHOR_PATTERN = "[A-Za-z]+([ .'-][A-Za-z]+)*\\.?";
 
     public ComicBookManagement() {
     }
@@ -84,7 +84,8 @@ public class ComicBookManagement {
                 double price = Double.parseDouble(lines.get(start + 2).trim());
                 String author = lines.get(start + 3).trim();
                 int volume = Integer.parseInt(lines.get(start + 4).trim());
-                if (title.isEmpty() || author.isEmpty()) {
+                if (id < 1 || id > MAX_NUMBER || title.isEmpty() || author.isEmpty()
+                        || price < 0.01 || price > MAX_PRICE || volume < 1 || volume > MAX_NUMBER) {
                     throw new NumberFormatException();
                 }
                 if (findById(id) != null) {
@@ -119,7 +120,7 @@ public class ComicBookManagement {
                     "letters, digits, spaces and common punctuation (. , : ' - ! ? & / ( ) # + ; \")"
                     + " and must start with a letter or digit (example: One Piece)");
             author = readText(sc, "author", AUTHOR_MAX, AUTHOR_PATTERN,
-                    "English letters and spaces (no digits or special characters, example: Eiichiro Oda)");
+                    "letters, spaces and common name punctuation (. ' -) and must start with a letter (example: Eiichiro Oda, Fujiko F. Fujio)");
             volume = readInt(sc, "volume");
             duplicate = isDuplicate(title, author, volume);
             if (duplicate) {
@@ -130,7 +131,7 @@ public class ComicBookManagement {
         double price = readPrice(sc, -1);
 
         comicList.add(new ComicBook(id, title, price, author, volume));
-        System.out.println("Comic book added successfully.");
+        System.out.println("Comic book \"" + title + "\" (ID: " + id + ") added successfully.");
         displayAll();
     }
 
@@ -156,7 +157,7 @@ public class ComicBookManagement {
         }
 
         if (found.isEmpty()) {
-            System.out.println("No comic book has a title containing \"" + query + "\".");
+            System.out.println("No comic book found with title containing \"" + query + "\".");
         } else {
             printTable(found);
             System.out.println("Found " + books(found.size()) + " with a title containing \"" + query + "\".");
@@ -186,10 +187,10 @@ public class ComicBookManagement {
         }
 
         if (found.isEmpty()) {
-            System.out.println("No comic book was found by the author \"" + query + "\".");
+            System.out.println("No comic book found by author \"" + query + "\".");
         } else {
             printTable(found);
-            System.out.println("Found " + books(found.size()) + " by the author \"" + query + "\".");
+            System.out.println("Found " + books(found.size()) + " by author \"" + query + "\".");
         }
     }
 
@@ -238,7 +239,7 @@ public class ComicBookManagement {
 
     // "1 comic book", "2 comic books"
     private static String books(int n) {
-        return n + (n == 1 ? " comic book" : " comic books");
+        return n + (n <= 1 ? " comic book" : " comic books");
     }
 
     // Shared by the functions that need at least one book, e.g. when the data file was deleted
@@ -307,9 +308,13 @@ public class ComicBookManagement {
 
         System.out.println("Found comic book: \"" + target.getTitle() + "\" (ID: " + target.getId() + ").");
 
-        target.setBookRentalPrice(readPrice(sc, target.getBookRentalPrice()));
-
-        System.out.println("Comic book updated successfully.");
+        double oldPrice = target.getBookRentalPrice();
+        double newPrice = readPrice(sc, oldPrice);
+        if (newPrice != oldPrice) {
+            target.setBookRentalPrice(newPrice);
+            System.out.println("Rental price of comic book \"" + target.getTitle() + "\" (ID: " + target.getId()
+                    + ") updated successfully to " + formatPrice(newPrice) + ".");
+        }
         displayAll();
     }
 
@@ -339,7 +344,7 @@ public class ComicBookManagement {
 
         if (confirm.startsWith("y")) {
             comicList.remove(target);
-            System.out.println("Comic book deleted successfully.");
+            System.out.println("Comic book \"" + target.getTitle() + "\" (ID: " + target.getId() + ") deleted successfully.");
             displayAll();
         } else {
             System.out.println("Deletion cancelled. Returning to the main menu.");
@@ -424,27 +429,27 @@ public class ComicBookManagement {
 
     // current < 0: a new book, the price is required; otherwise Enter keeps the current price (function 4)
     private double readPrice(Scanner sc, double current) {
-        double price = -1; // stays -1 until a price from 0 to MAX_PRICE is entered
+        double price = -1; // stays -1 until a price from 0.01 to MAX_PRICE is entered
         while (price < 0) {
             System.out.print(current < 0 ? "Enter rental price($): "
                     : "Enter new rental price (current: " + formatPrice(current) + ", press Enter to keep): ");
             String s = readLine(sc);
-            if (s.isEmpty() && current > 0) {
+            if (s.isEmpty() && current >= 0.01) {
                 price = current;
                 System.out.println("The rental price remains unchanged.");
             } else if (s.isEmpty()) {
                 System.out.println("The rental price cannot be empty. Please enter a price from 0.01 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + ".");
             } else if (!s.matches("\\d{1,7}(\\.\\d{1,2})?")) {
-                System.out.println("\"" + s + "\" is not a valid rental price. Please enter a number from 0 to "
+                System.out.println("\"" + s + "\" is not a valid rental price. Please enter a number from 0.01 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + " with at most 2 decimal places, using a dot"
                         + " as the decimal separator (example: 7.50).");
             } else {
                 double value = Double.parseDouble(s);
-                if (value <= MAX_PRICE) {
+                if (value >= 0.01 && value <= MAX_PRICE) {
                     price = value;
                 } else {
-                    System.out.println("The rental price must be from 0 to "
+                    System.out.println("The rental price must be from 0.01 to "
                             + String.format(Locale.US, "%.2f", MAX_PRICE) + ". You entered " + s + ".");
                 }
             }
@@ -452,11 +457,17 @@ public class ComicBookManagement {
         return price;
     }
 
-    // e.g. "27 comic books saved (2 more than at start)."
+    // e.g. "27 comic books saved to 'data/ComicBooks.txt' (increased by 2)."
     public String saveSummary() {
         int diff = comicList.size() - loadedCount;
-        String change = diff > 0 ? diff + " more than at start"
-                : diff < 0 ? (-diff) + " fewer than at start" : "unchanged since start";
+        String change;
+        if (diff > 0) {
+            change = "increased by " + diff;
+        } else if (diff < 0) {
+            change = "decreased by " + (-diff);
+        } else {
+            change = "unchanged";
+        }
         return books(comicList.size()) + " saved to '" + FILE_NAME + "' (" + change + ").";
     }
 
