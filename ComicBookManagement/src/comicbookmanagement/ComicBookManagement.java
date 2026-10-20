@@ -23,11 +23,11 @@ public class ComicBookManagement {
 
     // Input limits, chosen so every value fits its column in displayAll()
     private static final int MAX_NUMBER = 9999;
-    private static final double MAX_PRICE = 1000.00;
+    private static final double MAX_PRICE = 10000000.00;
     private static final int TITLE_MAX = 30;
     private static final int AUTHOR_MAX = 25;
     private static final String TITLE_PATTERN = "[A-Za-z0-9][A-Za-z0-9 .,:'!?&/()#+;\"-]*";
-    private static final String AUTHOR_PATTERN = "[A-Za-z]+([ .'-][A-Za-z]+)*\\.?";
+    private static final String AUTHOR_PATTERN = "^[A-Za-z][A-Za-z .'-]*$";
 
     public ComicBookManagement() {
     }
@@ -212,7 +212,7 @@ public class ComicBookManagement {
     // Columns widen to fit the longest value, so long data loaded from the file cannot break the table
     private void printTable(List<ComicBook> books) {
         int noW = Math.max(3, String.valueOf(books.size()).length());
-        int idW = 4, titleW = 30, priceW = 10, authorW = 25, volumeW = 6;
+        int idW = 4, titleW = 20, priceW = 8, authorW = 18, volumeW = 6;
         for (ComicBook c : books) {
             idW = Math.max(idW, String.valueOf(c.getId()).length());
             titleW = Math.max(titleW, c.getTitle().length());
@@ -417,7 +417,7 @@ public class ComicBookManagement {
         boolean newWord = true;
         for (int i = 0; i < sb.length(); i++) {
             char ch = sb.charAt(i);
-            if (ch == ' ' || ch == '-') {
+            if (ch == ' ' || ch == '-' || ch == '.') {
                 newWord = true;
             } else if (newWord) {
                 sb.setCharAt(i, Character.toUpperCase(ch));
@@ -440,7 +440,7 @@ public class ComicBookManagement {
             } else if (s.isEmpty()) {
                 System.out.println("The rental price cannot be empty. Please enter a price from 0.01 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + ".");
-            } else if (!s.matches("\\d{1,7}(\\.\\d{1,2})?")) {
+            } else if (!s.matches("\\d{1,9}(\\.\\d{1,2})?")) {
                 System.out.println("\"" + s + "\" is not a valid rental price. Please enter a number from 0.01 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + " with at most 2 decimal places, using a dot"
                         + " as the decimal separator (example: 7.50).");
