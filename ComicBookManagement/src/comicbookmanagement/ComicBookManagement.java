@@ -429,11 +429,11 @@ public class ComicBookManagement {
             System.out.print(current < 0 ? "Enter rental price($): "
                     : "Enter new rental price (current: " + formatPrice(current) + ", press Enter to keep): ");
             String s = readLine(sc);
-            if (s.isEmpty() && current >= 0) {
+            if (s.isEmpty() && current > 0) {
                 price = current;
                 System.out.println("The rental price remains unchanged.");
             } else if (s.isEmpty()) {
-                System.out.println("The rental price cannot be empty. Please enter a price from 0 to "
+                System.out.println("The rental price cannot be empty. Please enter a price from 0.01 to "
                         + String.format(Locale.US, "%.2f", MAX_PRICE) + ".");
             } else if (!s.matches("\\d{1,7}(\\.\\d{1,2})?")) {
                 System.out.println("\"" + s + "\" is not a valid rental price. Please enter a number from 0 to "
